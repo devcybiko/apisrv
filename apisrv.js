@@ -11,7 +11,8 @@ function readAPIDir(apiDir, config) {
       let apiName = fname.split(".")[0]; // strip off the .js
       let apiPath = path.join(apiDir, fname);
       let api = require(apiPath);
-      let newapi = new api(config[apiName]);
+      // let newapi = new api(config[apiName]); // shouldn't it have access to all configs, eg: mysql configs?
+      let newapi = new api(config);
       apis[apiName] = newapi;
     })
   fs.readdirSync(apiDir) // process all the subdirectories
