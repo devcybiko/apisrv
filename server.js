@@ -10,6 +10,7 @@ var port = process.env.PORT || 8890;
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({extended: true})); // support encoded bodies
 app.use("/api/*", apis(__dirname+"/api", apiConfig));
+app.use(express.static('./site'))
 
 function main() {
     app.listen(port, function (err) {
