@@ -6,10 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "apisrv": "./apisrv.js"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "glstools": "~1.3",
     "mysql2": "^1.7.0"
   }
 }

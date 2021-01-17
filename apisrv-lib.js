@@ -8,9 +8,11 @@ function readAPIDir(apiDir, config) {
     fs.readdirSync(apiDir) // read all the .js apis
         .filter(fname => fname.endsWith(".js") && fname[0] !== '.')
         .forEach(fname => {
-            let apiName = fname.split(".")[0]; // strip off the .js
-            let apiPath = path.join(apiDir, fname);
-            console.log(apiPath);
+            let fullName = path.resolve(apiDir,fname); //path.join(apiDir, fname);
+            let parsed = path.parse(fullName);
+            let apiName = parsed.name; // strip off the .js
+            let apiPath = path.join(parsed.dir, parsed.base);
+            console.log({fname, apiDir, fullName, apiPath});
             let api = require(apiPath);
             // let newapi = new api(config[apiName]); // shouldn't it have access to all configs, eg: mysql configs?
             let newapi = new api(config);
@@ -27,11 +29,10 @@ function readAPIDir(apiDir, config) {
 
 apis.handler = function (req, res, data) {
     try {
-        console.log(req.params);
-        console.log(data);
+        console.log(req);
         let apiList = req.params['0'].split("/");
         let api = this;
-        for (name of apiList) {
+        for (let name of apiList) {
             if (!name) continue;
             let newapi = api[name];
             if (newapi.bind) newapi = newapi.bind(api);
@@ -56,9 +57,6 @@ apis.use = function (req, res, next) {
 }
 
 apis.init = function (theBasePath, theConfig = {}) {
-    console.log("apis.init");
-    console.log(theBasePath);
-    // console.log(theConfig);
     basePath = theBasePath;
     config = theConfig;
     readAPIDir(basePath, config);
