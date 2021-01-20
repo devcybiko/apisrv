@@ -12,11 +12,9 @@ function readAPIDir(apiDir, config) {
             let parsed = path.parse(fullName);
             let apiName = parsed.name; // strip off the .js
             let apiPath = path.join(parsed.dir, parsed.base);
-            console.log({fname, apiDir, fullName, apiPath});
             let api = require(apiPath);
             // let newapi = new api(config[apiName]); // shouldn't it have access to all configs, eg: mysql configs?
             let newapi = new api(config);
-            console.log(apiName);
             apis[apiName] = newapi;
         })
     fs.readdirSync(apiDir) // process all the subdirectories
@@ -29,7 +27,6 @@ function readAPIDir(apiDir, config) {
 
 apis.handler = function (req, res, data) {
     try {
-        console.log(req);
         let apiList = req.params['0'].split("/");
         let api = this;
         for (let name of apiList) {
@@ -40,15 +37,12 @@ apis.handler = function (req, res, data) {
         }
         return api(req, res, data);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send({ error: JSON.stringify(err) });
     }
 }
 
 apis.use = function (req, res, next) {
-    console.log(req.method);
-    console.log(req.query);
-    console.log(req.body);
     if (req.method === 'GET') return this.handler(req, res, req.query);
     else if (req.method === 'PUT') return this.handler(req, res, req.body);
     else if (req.method === 'POST') return this.handler(req, res, req.body);

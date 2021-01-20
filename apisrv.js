@@ -11,13 +11,13 @@ function main() {
     let configFile = opts.c[0] || "./apisrv-config.js";
     const apiConfig = require(path.resolve(process.cwd(), configFile));
     const staticPath = path.resolve(process.cwd(), apiConfig.staticDir);
-console.log(staticPath);
+
     const app = express();
     let port = process.env.PORT || apiConfig.port || 8890;
+    app.use(express.static(staticPath));
     app.use(bodyParser.json()); // support json encoded bodies
     app.use(bodyParser.urlencoded({extended: true})); // support encoded bodies
     app.use("/api/*", apis(apiConfig.apiDir, apiConfig));
-    app.use(express.static(staticPath));
 
     app.listen(port, function (err) {
         if (err) {
